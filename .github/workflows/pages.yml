@@ -46,6 +46,16 @@ jobs:
           NODE_PATH: ${{ runner.temp }}/hlm2-playtest/node_modules
           CHROMIUM_PATH: /usr/bin/google-chrome
         run: node tests/browser/playtest.cjs
+      - name: Include shared arcade online counter
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("web/index.html")
+          text = p.read_text()
+          script = '<script type="module" src="/assets/arcade/presence.js"></script>'
+          if script not in text:
+              p.write_text(text.replace('</body>', script + '</body>'))
+          PY
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
